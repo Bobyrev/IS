@@ -10,7 +10,10 @@ namespace Med
     {
         static void Main(string[] args)
         {
-            Clients cl = new Clients();
+			string str = @"Data Source=CEPEGGA-ПК\SQLEXPRESS;
+                           Initial Catalog=Med;
+                           Integrated Security=True";
+            Clients cl = new Clients(str);
             foreach (string[] elem in cl.AllRecords()) 
             {
                 Console.WriteLine(string.Join(" ",elem));

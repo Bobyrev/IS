@@ -12,11 +12,9 @@ namespace Med
         private SqlConnection connect;
         private SqlCommand cmd;
         private Random rnd = new Random();
-        public Clients()
+        public Clients(string str)
         {
-            string str = @"Data Source=CEPEGGA-ПК\SQLEXPRESS;
-                           Initial Catalog=Med;
-                           Integrated Security=True";
+            
             connect = new SqlConnection(str);
             connect.Open();
         }
