@@ -1,0 +1,10 @@
+c:\users\pasha\documents\visual studio 2013\Projects\MIS\MIS\bin\Debug\MIS.exe.config
+c:\users\pasha\documents\visual studio 2013\Projects\MIS\MIS\bin\Debug\MIS.exe
+c:\users\pasha\documents\visual studio 2013\Projects\MIS\MIS\bin\Debug\MIS.pdb
+c:\users\pasha\documents\visual studio 2013\Projects\MIS\MIS\obj\Debug\MIS.csprojResolveAssemblyReference.cache
+c:\users\pasha\documents\visual studio 2013\Projects\MIS\MIS\obj\Debug\MIS.Form1.resources
+c:\users\pasha\documents\visual studio 2013\Projects\MIS\MIS\obj\Debug\MIS.Properties.Resources.resources
+c:\users\pasha\documents\visual studio 2013\Projects\MIS\MIS\obj\Debug\MIS.csproj.GenerateResource.Cache
+c:\users\pasha\documents\visual studio 2013\Projects\MIS\MIS\obj\Debug\MIS.exe
+c:\users\pasha\documents\visual studio 2013\Projects\MIS\MIS\obj\Debug\MIS.pdb
+C:\Users\Pasha\documents\visual studio 2013\Projects\MIS\MIS\obj\Debug\MIS.Form2.resources
