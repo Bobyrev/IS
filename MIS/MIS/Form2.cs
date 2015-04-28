@@ -50,13 +50,13 @@ namespace MIS
                 return;
             }
 
-            string str = @"Data Source=PAVEL\SQLEXPRESS;
+            string str = @"Data Source=CEPEGGA-ПК\SQLEXPRESS;
                            Initial Catalog=Med;
                            Integrated Security=True";
             connect = new SqlConnection(str);
             connect.Open();
 
-            SqlCommand cmd = new SqlCommand(String.Format("SELECT password FROM Login WHERE login = '{0}'", textBox1.Text.Trim()), connect);
+            SqlCommand cmd = new SqlCommand(String.Format("SELECT passwd FROM Login WHERE login = '{0}'", textBox1.Text.Trim()), connect);
             using (SqlDataReader sdr = cmd.ExecuteReader())
             {
                 if (sdr.Read())

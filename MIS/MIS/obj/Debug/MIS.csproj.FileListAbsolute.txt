@@ -8,3 +8,13 @@ c:\users\pasha\documents\visual studio 2013\Projects\MIS\MIS\obj\Debug\MIS.cspro
 c:\users\pasha\documents\visual studio 2013\Projects\MIS\MIS\obj\Debug\MIS.exe
 c:\users\pasha\documents\visual studio 2013\Projects\MIS\MIS\obj\Debug\MIS.pdb
 C:\Users\Pasha\documents\visual studio 2013\Projects\MIS\MIS\obj\Debug\MIS.Form2.resources
+C:\Users\CepeGGa\Documents\Софт\ИБ 126-2\6 семестр\IS\MIS\MIS\bin\Debug\MIS.exe.config
+C:\Users\CepeGGa\Documents\Софт\ИБ 126-2\6 семестр\IS\MIS\MIS\obj\Debug\MIS.exe
+C:\Users\CepeGGa\Documents\Софт\ИБ 126-2\6 семестр\IS\MIS\MIS\obj\Debug\MIS.pdb
+C:\Users\CepeGGa\Documents\Софт\ИБ 126-2\6 семестр\IS\MIS\MIS\bin\Debug\MIS.exe
+C:\Users\CepeGGa\Documents\Софт\ИБ 126-2\6 семестр\IS\MIS\MIS\bin\Debug\MIS.pdb
+C:\Users\CepeGGa\Documents\Софт\ИБ 126-2\6 семестр\IS\MIS\MIS\obj\Debug\MIS.csprojResolveAssemblyReference.cache
+C:\Users\CepeGGa\Documents\Софт\ИБ 126-2\6 семестр\IS\MIS\MIS\obj\Debug\MIS.Form1.resources
+C:\Users\CepeGGa\Documents\Софт\ИБ 126-2\6 семестр\IS\MIS\MIS\obj\Debug\MIS.Form2.resources
+C:\Users\CepeGGa\Documents\Софт\ИБ 126-2\6 семестр\IS\MIS\MIS\obj\Debug\MIS.Properties.Resources.resources
+C:\Users\CepeGGa\Documents\Софт\ИБ 126-2\6 семестр\IS\MIS\MIS\obj\Debug\MIS.csproj.GenerateResource.Cache

@@ -49,7 +49,7 @@ namespace MIS
         private void Load_Name_Doctors()
         {
             comboBox2.Items.Clear();
-            SqlCommand cmd = new SqlCommand(String.Format("SELECT last_name, first_name, patronymic FROM Doctors WHERE specialization = '{0}' AND Deleted IS NULL ORDER BY last_name ASC", comboBox1.Text), connect);
+            SqlCommand cmd = new SqlCommand(String.Format("SELECT Surname, Name, Twoname FROM Doctors WHERE specialization = '{0}' AND Del IS NULL", comboBox1.Text), connect);
             using (SqlDataReader sdr = cmd.ExecuteReader())
             {
                 while (sdr.Read())
@@ -82,7 +82,7 @@ namespace MIS
                 {
                     label8.Text = "✓";
                     label8.ForeColor = Color.Green;
-                    SqlCommand cmd = new SqlCommand(String.Format("SELECT last_name, first_name, patronymic FROM Clients WHERE polis = '{0}'", textBox1.Text), connect);
+                    SqlCommand cmd = new SqlCommand(String.Format("SELECT Surname, Name, Twoname FROM Clients WHERE Polis = '{0}'", textBox1.Text), connect);
                     using (SqlDataReader sdr = cmd.ExecuteReader())
                     {
                         if (sdr.Read())
@@ -165,6 +165,148 @@ namespace MIS
             textBox2.Text = "";
             textBox3.Text = "";
             textBox4.Text = "";
+        }
+
+        //--------------------Моя часть--------------------------------------
+
+        List<string[]> work_data = new List<string[]>();
+        private void ShowAll(DateTime day) 
+        {
+            work_data.Clear();
+            SqlCommand cmd = new SqlCommand(string.Format("SELECT Doctors.ID, Work_days.ID, Doctors.Name + ' ' + Doctors.Surname, Work_days.Start_work, Work_days.End_work, Work_days.Cabinet "+
+                                            "FROM Work_days "+
+                                            "INNER JOIN Doctors ON Doctors.ID = Work_days.Doctor_ID "+
+                                            "WHERE Work_days.Del IS NULL AND Work_days.Day = '{0}'",day.ToString("dd-MM-yyyy")),connect);
+            using (SqlDataReader sdr = cmd.ExecuteReader())
+            {
+                while (sdr.Read())
+                {
+                    work_data.Add(new string[] { sdr[0].ToString(), sdr[1].ToString(), sdr[2].ToString(), sdr[3].ToString(), sdr[4].ToString(), sdr[5].ToString() });
+                }
+            }
+            dataGridView1.Rows.Clear();
+            foreach (string[] elem in work_data) 
+            {
+                dataGridView1.Rows.Add(elem[2], elem[3], elem[4], elem[5]);
+            }
+            del = false;
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {//Отображение
+            ShowAll(dateTimePicker2.Value);
+        }
+
+
+        List<string[]> doctors = new List<string[]>();
+        bool del = false;
+        private void dataGridView1_SelectionChanged(object sender, EventArgs e)
+        {//При изменении строки
+            if (del) return; 
+            SqlCommand cmd = new SqlCommand("SELECT Doctors.ID, Doctors.Surname FROM Doctors",connect);
+            doctors.Clear();
+            comboBox3.Items.Clear();
+            using (SqlDataReader sdr = cmd.ExecuteReader())
+            {
+                while (sdr.Read())
+                {
+                    doctors.Add(new string[] { sdr[0].ToString(), sdr[1].ToString() });
+                    comboBox3.Items.Add(sdr[1].ToString());
+                }
+            }
+            int ind = dataGridView1.CurrentRow.Index;
+            if (work_data.Count != 0)
+            {
+                for (int i = 0; i < doctors.Count; i++)
+                {
+                    if (doctors[i][0] == work_data[ind][0])
+                    {
+                        comboBox3.Text = doctors[i][1];
+                        break;
+                    }
+                }
+                textBox5.Text = work_data[ind][5];
+                string[] work_start = work_data[ind][3].Split(':');
+                numericUpDown1.Value = int.Parse(work_start[0]);
+                numericUpDown2.Value = int.Parse(work_start[1]);
+                string[] work_end = work_data[ind][4].Split(':');
+                numericUpDown4.Value = int.Parse(work_end[0]);
+                numericUpDown3.Value = int.Parse(work_end[1]);
+            }
+            else
+            {
+                comboBox3.Text = doctors[0][1];
+            }
+        }
+
+        private void dateTimePicker2_ValueChanged(object sender, EventArgs e)
+        {
+            ShowAll(dateTimePicker2.Value);
+        }
+
+        private void button6_Click(object sender, EventArgs e)
+        {//Добавление
+            if (comboBox3.Text == "" && textBox5.Text == "" && numericUpDown1.Value >= numericUpDown4.Value)
+                return;
+            string doc = "";
+            for (int i = 0; i < doctors.Count; i++) 
+            {
+                if (doctors[i][1] == comboBox3.Text) 
+                {
+                    doc = doctors[i][0];
+                }
+            }
+            string start = numericUpDown1.Value.ToString("00") + ':' + numericUpDown2.Value.ToString("00");
+            string end = numericUpDown4.Value.ToString("00") + ':' + numericUpDown3.Value.ToString("00");
+            string cab = textBox5.Text;
+            SqlCommand cmd = new SqlCommand(string.Format("INSERT INTO Work_days VALUES('{0}','{1}','{2}','{3}','{4}', NULL)",
+                                            doc,
+                                            dateTimePicker2.Value.ToString("dd-MM-yyyy"),
+                                            start,
+                                            end,
+                                            cab), connect);
+            cmd.ExecuteNonQuery();
+            ShowAll(dateTimePicker2.Value);
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {//Изменение
+            if (work_data.Count == 0 || (comboBox3.Text == "" && textBox5.Text == "" && numericUpDown1.Value >= numericUpDown4.Value))
+                return;
+            string doc = "";
+            for (int i = 0; i < doctors.Count; i++)
+            {
+                if (doctors[i][1] == comboBox3.Text)
+                {
+                    doc = doctors[i][0];
+                }
+            }
+            string id = work_data[dataGridView1.CurrentRow.Index][1];
+            string start = numericUpDown1.Value.ToString("00") + ':' + numericUpDown2.Value.ToString("00");
+            string end = numericUpDown4.Value.ToString("00") + ':' + numericUpDown3.Value.ToString("00");
+            string cab = textBox5.Text;
+            SqlCommand cmd = new SqlCommand(string.Format("UPDATE Work_days SET Doctor_ID = '{0}', Day = '{1}',Start_work ='{2}',End_work = '{3}',Cabinet ='{4}' WHERE ID = '{5}'",
+                                            doc,
+                                            dateTimePicker2.Value.ToString("dd-MM-yyyy"),
+                                            start,
+                                            end,
+                                            cab,
+                                            id), connect);
+            cmd.ExecuteNonQuery();
+            ShowAll(dateTimePicker2.Value);
+
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {//Удаление
+            del = true;
+            if (work_data.Count == 0)
+                return;
+
+            string id = work_data[dataGridView1.CurrentRow.Index][1];
+            SqlCommand cmd = new SqlCommand(string.Format("UPDATE Work_days SET Del = '{0}' WHERE ID = '{1}'",DateTime.Today,id), connect);
+            cmd.ExecuteNonQuery();
+            ShowAll(dateTimePicker2.Value);
         }
     }
 }
