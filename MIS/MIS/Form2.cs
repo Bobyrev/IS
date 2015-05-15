@@ -50,7 +50,7 @@ namespace MIS
                 return;
             }
 
-            string str = @"Data Source=CEPEGGA-ПК\SQLEXPRESS;
+            string str = @"Data Source=PAVEL\SQLEXPRESS;
                            Initial Catalog=Med;
                            Integrated Security=True";
             connect = new SqlConnection(str);
@@ -79,6 +79,11 @@ namespace MIS
                     label3.Text = "Неверный логин или пароль.";
                 }
             }
+        }
+
+        private void Form2_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }

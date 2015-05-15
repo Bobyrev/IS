@@ -20,18 +20,13 @@ namespace MIS
         {
             InitializeComponent();
             this.StartPosition = FormStartPosition.CenterScreen;
-            label9.Visible = false;
-            label10.Visible = false;
-            label11.Visible = false;
-            label8.Text = "";
+            label5.Text = "";
+            label6.Visible = false;
+            label7.Visible = false;
+            label8.Visible = false;
         }
 
-        private void Form1_Shown(object sender, EventArgs e)
-        {
-            Form2 form2 = new Form2(this);
-            this.Visible = false;
-            form2.Show();
-        }
+        #region Доп.методы
 
         public void Load_Spetialization_Doctors()
         {
@@ -46,10 +41,104 @@ namespace MIS
             }
         }
 
+        #endregion
+
+        private void Form1_Shown(object sender, EventArgs e)
+        {
+            Form2 form2 = new Form2(this);
+            this.Visible = false;
+            form2.Show();
+        }
+
+        private void textBox1_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if ((!Char.IsDigit(e.KeyChar) || textBox1.Text.Length == 24) && e.KeyChar != 8) 
+            {
+                e.Handled = true;
+            }
+        }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+            if (textBox1.Text.Length == 24)
+            {
+                label5.Text = "✓";
+                label5.ForeColor = Color.Green;
+
+                SqlCommand cmd = new SqlCommand(string.Format("SELECT Name, Surname, Twoname FROM Clients WHERE Polis = '{0}'", textBox1.Text), connect);
+
+                using (SqlDataReader sdr = cmd.ExecuteReader())
+                {
+                    if (sdr.Read())
+                    {
+                        textBox2.Text = sdr[0].ToString();
+                        textBox3.Text = sdr[1].ToString();
+                        textBox4.Text = sdr[2].ToString();
+                    }
+                }
+            }
+            else
+            {
+                label5.Text = textBox1.Text.Length.ToString();
+                label5.ForeColor = Color.Black;
+            }
+        }
+
+        private void textBox2_TextChanged(object sender, EventArgs e)
+        {
+            if (textBox2.Text.Length != 0)
+            {
+                label6.Visible = true;
+            }
+            else
+            {
+                label6.Visible = false;
+            }
+        }
+
+        private void textBox3_TextChanged(object sender, EventArgs e)
+        {
+            if (textBox3.Text.Length != 0)
+            {
+                label7.Visible = true;
+            }
+            else
+            {
+                label7.Visible = false;
+            }
+        }
+
+        private void textBox4_TextChanged(object sender, EventArgs e)
+        {
+            if (textBox4.Text.Length != 0)
+            {
+                label8.Visible = true;
+            }
+            else
+            {
+                label8.Visible = false;
+            }
+        }
+
+        private void label6_Click(object sender, EventArgs e)
+        {
+            textBox2.Clear();
+        }
+
+        private void label7_Click(object sender, EventArgs e)
+        {
+            textBox3.Clear();
+        }
+
+        private void label8_Click(object sender, EventArgs e)
+        {
+            textBox4.Clear();
+        }
+
         private void Load_Name_Doctors()
         {
             comboBox2.Items.Clear();
-            SqlCommand cmd = new SqlCommand(String.Format("SELECT Surname, Name, Twoname FROM Doctors WHERE specialization = '{0}' AND Del IS NULL", comboBox1.Text), connect);
+            SqlCommand cmd = new SqlCommand(String.Format("SELECT Name, Surname, Twoname FROM Doctors WHERE Specialization = '{0}' AND Del IS NULL", comboBox1.Text), connect);
             using (SqlDataReader sdr = cmd.ExecuteReader())
             {
                 while (sdr.Read())
@@ -62,109 +151,184 @@ namespace MIS
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
             Load_Name_Doctors();
+            comboBox4.Items.Clear();
         }
 
-        private void Form1_FormClosed(object sender, FormClosedEventArgs e)
+        private void new_rasp()
         {
-            connect.Close();
-        }
-
-        private void textBox1_TextChanged(object sender, EventArgs e)
-        {
-            label8.ForeColor = Color.Black;
-            if (textBox1.Text.Length == 0)
+            comboBox4.Items.Clear();
+            string[] str = comboBox2.Text.Split(' ');
+            int id = 0;
+            SqlCommand cmd = new SqlCommand(string.Format("SELECT ID FROM Doctors WHERE Name = '{0}' AND Specialization = '{1}'", str[0], comboBox1.Text), connect);
+            using (SqlDataReader sdr = cmd.ExecuteReader())
             {
-                label8.Text = "";
+                sdr.Read();
+                id = (int)sdr[0];
+            }
+            int start_hour = 0;
+            int start_minutes = 0;
+            int stop_hour = 0;
+            int stop_minutes = 0;
+            cmd = new SqlCommand(string.Format("SELECT Start_work, End_work, Cabinet FROM Work_days WHERE Day = '{0}' AND Doctor_ID = '{1}'", dateTimePicker1.Value, id), connect);
+            using (SqlDataReader sdr = cmd.ExecuteReader())
+            {
+                if (sdr.Read())
+                {
+                    int[] t = sdr[0].ToString().Split(':').Select(int.Parse).ToArray();
+                    start_hour = t[0];
+                    start_minutes = t[1];
+                    t = sdr[1].ToString().Split(':').Select(int.Parse).ToArray();
+                    stop_hour = t[0];
+                    stop_minutes = t[1];
+                }
+            }
+            if (start_hour != 0 && stop_hour != 0)
+            {
+                string time = start_hour.ToString() + ":" + ((start_minutes == 0) ? "00" : start_minutes.ToString());
+                cmd = new SqlCommand(string.Format("SELECT * FROM Records WHERE ID_Doctor = '{0}' AND Time = '{1}' AND Day = '{2}'", id, time, dateTimePicker1.Value), connect);
+                using (SqlDataReader sdr = cmd.ExecuteReader())
+                {
+                    if (!sdr.Read())
+                    {
+                        comboBox4.Items.Add(start_hour.ToString() + ":" + ((start_minutes == 0) ? "00" : start_minutes.ToString()));
+                    }
+                }
             }
             else
             {
-                if (textBox1.Text.Length == 24)
+                MessageBox.Show(string.Format("На дату: {0} у врача {1} нет свободного времени.", dateTimePicker1.Value.Date, comboBox2.Text));
+            }
+            while (start_hour != stop_hour || start_minutes != stop_minutes)
+            {
+                if (start_minutes == 45)
                 {
-                    label8.Text = "✓";
-                    label8.ForeColor = Color.Green;
-                    SqlCommand cmd = new SqlCommand(String.Format("SELECT Surname, Name, Twoname FROM Clients WHERE Polis = '{0}'", textBox1.Text), connect);
-                    using (SqlDataReader sdr = cmd.ExecuteReader())
-                    {
-                        if (sdr.Read())
-                        {
-                            textBox2.Text = sdr[0].ToString();
-                            textBox3.Text = sdr[1].ToString();
-                            textBox4.Text = sdr[2].ToString();
-                        }
-                        else
-                        {
-                            textBox2.Text = "";
-                            textBox3.Text = "";
-                            textBox4.Text = "";
-                        }
-                    }
+                    start_minutes = 0;
+                    start_hour++;
                 }
                 else
                 {
-                    label8.Text = textBox1.Text.Length.ToString();
+                    start_minutes += 15;
+                }
+                string time = start_hour.ToString() + ":" + start_minutes.ToString();
+                cmd = new SqlCommand(string.Format("SELECT * FROM Records WHERE ID_Doctor = '{0}' AND Time = '{1}' AND Day = '{2}'", id, time, dateTimePicker1.Value), connect);
+                using (SqlDataReader sdr = cmd.ExecuteReader())
+                {
+                    if (!sdr.Read())
+                    {
+                        comboBox4.Items.Add(start_hour.ToString() + ":" + ((start_minutes == 0) ? "00" : start_minutes.ToString()));
+                    }
                 }
             }
         }
 
-        private void label9_Click(object sender, EventArgs e)
+        private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
         {
-            textBox2.Text = "";
+            comboBox4.Items.Clear();
+            new_rasp();
         }
 
-        private void label10_Click(object sender, EventArgs e)
+        private void dateTimePicker1_ValueChanged(object sender, EventArgs e)
         {
-            textBox3.Text = "";
-        }
-
-        private void label11_Click(object sender, EventArgs e)
-        {
-            textBox4.Text = "";
-        }
-
-        private void textBox2_TextChanged(object sender, EventArgs e)
-        {
-            if (textBox2.Text.Length != 0)
+            comboBox4.Items.Clear();
+            if (comboBox2.Text.Length != 0)
             {
-                label9.Visible = true;
+                new_rasp();
+            }
+        }
+
+        private void button1_Click_1(object sender, EventArgs e)
+        {
+            if (textBox1.Text.Length != 24)
+            {
+                textBox1.BackColor = Color.Red;
             }
             else
             {
-                label9.Visible = false;
+                textBox1.BackColor = Color.White;
+                if (textBox2.Text.Length == 0)
+                {
+                    textBox2.BackColor = Color.Red;
+                }
+                else
+                {
+                    textBox2.BackColor = Color.White;
+                    if (textBox3.Text.Length == 0)
+                    {
+                        textBox3.BackColor = Color.Red;
+                    }
+                    else
+                    {
+                        textBox3.BackColor = Color.White;
+                        if (textBox4.Text.Length == 0)
+                        {
+                            textBox4.BackColor = Color.Red;
+                        }
+                        else
+                        {
+                            textBox4.BackColor = Color.White;
+                            if (comboBox1.Text.Length == 0) 
+                            {
+                                MessageBox.Show("Выберите специализацию врача.");
+                            }
+                            else
+                            {
+                                if (comboBox2.Text.Length == 0)
+                                {
+                                    MessageBox.Show("Выберите врача.");
+                                }
+                                else
+                                {
+                                    if (comboBox4.Text.Length == 0)
+                                    {
+                                        MessageBox.Show("Выберите время на которое записать клиента.");
+                                    }
+                                    else
+                                    {
+                                        int id_d = 0;
+                                        string[] str = comboBox2.Text.Split(' ');
+                                        SqlCommand cmd = new SqlCommand(string.Format("SELECT ID FROM Doctors WHERE Name = '{0}' AND Specialization = '{1}'", str[0], comboBox1.Text), connect);
+                                        using (SqlDataReader sdr = cmd.ExecuteReader())
+                                        {
+                                            sdr.Read();
+                                            id_d = (int)sdr[0];
+                                        }
+                                        int id = 0;
+                                        cmd = new SqlCommand(string.Format("SELECT MAX(ID) FROM Records"), connect);
+                                        using (SqlDataReader sdr = cmd.ExecuteReader())
+                                        {
+                                            if (sdr.Read())
+                                            {
+                                                try
+                                                {
+                                                    id = (int)sdr[0];
+                                                }
+                                                catch { }
+                                            }
+                                        }
+                                        id++;
+                                        cmd = new SqlCommand(string.Format("INSERT INTO Records VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', NULL)", id, id_d, textBox1.Text, dateTimePicker1.Value, comboBox4.Text), connect);
+                                        if (cmd.ExecuteNonQuery() == 1)
+                                        {
+                                            MessageBox.Show("Запись успешно добавлена.");
+                                            textBox1.Text = "";
+                                            textBox2.Text = "";
+                                            textBox3.Text = "";
+                                            textBox4.Text = "";
+                                            comboBox1.Text = "";
+                                            comboBox2.Items.Clear();
+                                            comboBox4.Items.Clear();
+                                        }
+                                        else
+                                        {
+                                            MessageBox.Show("При добавлении произошла ошибка.");
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
-        }
-
-        private void textBox3_TextChanged(object sender, EventArgs e)
-        {
-            if (textBox3.Text.Length != 0)
-            {
-                label10.Visible = true;
-            }
-            else
-            {
-                label10.Visible = false;
-            }
-        }
-
-        private void textBox4_TextChanged(object sender, EventArgs e)
-        {
-            if (textBox4.Text.Length != 0)
-            {
-                label11.Visible = true;
-            }
-            else
-            {
-                label11.Visible = false;
-            }
-        }
-
-        private void button2_Click(object sender, EventArgs e)
-        {
-            comboBox1.Text = "";
-            comboBox2.Text = "";
-            textBox1.Text = "";
-            textBox2.Text = "";
-            textBox3.Text = "";
-            textBox4.Text = "";
         }
 
         //--------------------Моя часть--------------------------------------
@@ -308,5 +472,26 @@ namespace MIS
             cmd.ExecuteNonQuery();
             ShowAll(dateTimePicker2.Value);
         }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void flowLayoutPanel1_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void comboBox3_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
     }
 }

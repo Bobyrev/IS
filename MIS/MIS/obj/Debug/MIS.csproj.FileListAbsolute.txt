@@ -18,3 +18,23 @@ C:\Users\CepeGGa\Documents\Софт\ИБ 126-2\6 семестр\IS\MIS\MIS\obj\D
 C:\Users\CepeGGa\Documents\Софт\ИБ 126-2\6 семестр\IS\MIS\MIS\obj\Debug\MIS.Form2.resources
 C:\Users\CepeGGa\Documents\Софт\ИБ 126-2\6 семестр\IS\MIS\MIS\obj\Debug\MIS.Properties.Resources.resources
 C:\Users\CepeGGa\Documents\Софт\ИБ 126-2\6 семестр\IS\MIS\MIS\obj\Debug\MIS.csproj.GenerateResource.Cache
+C:\Users\Pasha\Documents\GitHub\is\MIS\MIS\bin\Debug\MIS.exe.config
+C:\Users\Pasha\Documents\GitHub\is\MIS\MIS\obj\Debug\MIS.exe
+C:\Users\Pasha\Documents\GitHub\is\MIS\MIS\obj\Debug\MIS.pdb
+C:\Users\Pasha\Documents\GitHub\is\MIS\MIS\bin\Debug\MIS.exe
+C:\Users\Pasha\Documents\GitHub\is\MIS\MIS\bin\Debug\MIS.pdb
+C:\Users\Pasha\Documents\GitHub\is\MIS\MIS\obj\Debug\MIS.csprojResolveAssemblyReference.cache
+C:\Users\Pasha\Documents\GitHub\is\MIS\MIS\obj\Debug\MIS.Form1.resources
+C:\Users\Pasha\Documents\GitHub\is\MIS\MIS\obj\Debug\MIS.Form2.resources
+C:\Users\Pasha\Documents\GitHub\is\MIS\MIS\obj\Debug\MIS.Properties.Resources.resources
+C:\Users\Pasha\Documents\GitHub\is\MIS\MIS\obj\Debug\MIS.csproj.GenerateResource.Cache
+C:\Users\Pasha\Desktop\MIS\MIS\bin\Debug\MIS.exe.config
+C:\Users\Pasha\Desktop\MIS\MIS\obj\Debug\MIS.exe
+C:\Users\Pasha\Desktop\MIS\MIS\obj\Debug\MIS.pdb
+C:\Users\Pasha\Desktop\MIS\MIS\bin\Debug\MIS.exe
+C:\Users\Pasha\Desktop\MIS\MIS\bin\Debug\MIS.pdb
+C:\Users\Pasha\Desktop\MIS\MIS\obj\Debug\MIS.csprojResolveAssemblyReference.cache
+C:\Users\Pasha\Desktop\MIS\MIS\obj\Debug\MIS.Form1.resources
+C:\Users\Pasha\Desktop\MIS\MIS\obj\Debug\MIS.Form2.resources
+C:\Users\Pasha\Desktop\MIS\MIS\obj\Debug\MIS.Properties.Resources.resources
+C:\Users\Pasha\Desktop\MIS\MIS\obj\Debug\MIS.csproj.GenerateResource.Cache
