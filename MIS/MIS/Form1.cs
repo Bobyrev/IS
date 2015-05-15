@@ -353,6 +353,18 @@ namespace MIS
             {
                 dataGridView1.Rows.Add(elem[2], elem[3], elem[4], elem[5]);
             }
+            ////
+            cmd = new SqlCommand("SELECT Doctors.ID, Doctors.Surname FROM Doctors WHERE Del IS NULL", connect);
+            doctors.Clear();
+            comboBox3.Items.Clear();
+            using (SqlDataReader sdr = cmd.ExecuteReader())
+            {
+                while (sdr.Read())
+                {
+                    doctors.Add(new string[] { sdr[0].ToString(), sdr[1].ToString() });
+                    comboBox3.Items.Add(sdr[1].ToString());
+                }
+            }
             del = false;
         }
 
@@ -367,7 +379,7 @@ namespace MIS
         private void dataGridView1_SelectionChanged(object sender, EventArgs e)
         {//При изменении строки
             if (del) return; 
-            SqlCommand cmd = new SqlCommand("SELECT Doctors.ID, Doctors.Surname FROM Doctors",connect);
+            SqlCommand cmd = new SqlCommand("SELECT Doctors.ID, Doctors.Surname FROM Doctors WHERE Del IS NULL",connect);
             doctors.Clear();
             comboBox3.Items.Clear();
             using (SqlDataReader sdr = cmd.ExecuteReader())
@@ -473,6 +485,7 @@ namespace MIS
             ShowAll(dateTimePicker2.Value);
         }
 
+        #region Хз
         private void button1_Click(object sender, EventArgs e)
         {
 
@@ -492,6 +505,93 @@ namespace MIS
         {
 
         }
+        #endregion
+        // ------------------------ Про врачей ----------------------------------
+        List<string[]> doctors_data = new List<string[]>();
+
+        private void ShowAllDoctors()
+        {
+            doctors_data.Clear();
+            SqlCommand cmd = new SqlCommand("SELECT * FROM Doctors WHERE Del IS NULL", connect);
+            using (SqlDataReader sdr = cmd.ExecuteReader())
+            {
+                while (sdr.Read())
+                {
+                    doctors_data.Add(new string[] { sdr[0].ToString(), sdr[1].ToString(), sdr[2].ToString(), sdr[3].ToString(), sdr[4].ToString() });
+                }
+            }
+            dataGridView2.Rows.Clear();
+            foreach (string[] elem in doctors_data)
+            {
+                dataGridView2.Rows.Add(elem[2], elem[1], elem[3], elem[4]);
+            }
+            del_doc = false;
+        }
+
+        private void button8_Click(object sender, EventArgs e)
+        {//Отображение
+            ShowAllDoctors();
+        }
+        bool del_doc = false;
+        private void button10_Click(object sender, EventArgs e)
+        {//Изменить
+            if (doctors_data.Count == 0 || (textBox6.Text == "" || textBox7.Text == "" || textBox8.Text == "" || textBox9.Text == ""))
+                return;
+            string id = doctors_data[dataGridView2.CurrentRow.Index][0];
+            SqlCommand cmd = new SqlCommand(string.Format("UPDATE Doctors SET Surname = '{0}', Name = '{1}', Twoname = '{2}',Specialization = '{3}' WHERE ID = '{4}'",
+                                 textBox6.Text,
+                                 textBox7.Text,
+                                 textBox8.Text,
+                                 textBox9.Text,
+                                 id), connect);
+            cmd.ExecuteNonQuery();
+            ShowAllDoctors();
+        }
+
+        private void button9_Click(object sender, EventArgs e)
+        {//Удалить
+            del_doc = true;
+            if (doctors_data.Count == 0) return;
+            string id = doctors_data[dataGridView2.CurrentRow.Index][0];
+            SqlCommand cmd = new SqlCommand(string.Format("UPDATE Doctors SET Del = '{0}' WHERE ID = '{1}'", DateTime.Today, id), connect);
+            cmd.ExecuteNonQuery();
+            ShowAllDoctors();
+        }
+
+        private void button7_Click(object sender, EventArgs e)
+        {//Добавить
+            if (textBox6.Text == "" || textBox7.Text == "" || textBox8.Text == "" || textBox9.Text == "") return;
+            SqlCommand cmd = new SqlCommand(string.Format("INSERT INTO Doctors VALUES('{1}', '{0}', '{2}', '{3}', NULL)",
+                                             textBox6.Text,
+                                             textBox7.Text,
+                                             textBox8.Text,
+                                             textBox9.Text), connect);
+            cmd.ExecuteNonQuery();
+            ShowAllDoctors();
+        }
+
+        private void dataGridView2_SelectionChanged(object sender, EventArgs e)
+        {//При изменении строки
+            if (del_doc) return;
+            if (dataGridView2.Rows.Count != 0)
+            {
+                int ind = dataGridView2.CurrentRow.Index;
+                textBox6.Text = doctors_data[ind][2];
+                textBox7.Text = doctors_data[ind][1];
+                textBox8.Text = doctors_data[ind][3];
+                textBox9.Text = doctors_data[ind][4];
+            }
+            else
+            {
+                textBox6.Text = "";
+                textBox7.Text = "";
+                textBox8.Text = "";
+                textBox9.Text = "";
+            }
+        }
+
+        
+
 
     }
 }
