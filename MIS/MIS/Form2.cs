@@ -50,7 +50,7 @@ namespace MIS
                 return;
             }
 
-            string str = @"Data Source=CEPEGGA-ПК\SQLEXPRESS;
+            string str = @"Data Source=PAVEL\SQLEXPRESS;
                            Initial Catalog=Med;
                            Integrated Security=True";
             connect = new SqlConnection(str);

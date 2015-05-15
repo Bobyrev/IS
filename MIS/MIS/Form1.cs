@@ -284,9 +284,45 @@ namespace MIS
                                     }
                                     else
                                     {
+                                        bool read = false;
+                                        SqlCommand cmd = new SqlCommand(string.Format("SELECT * FROM Clients WHERE Polis = '{0}'", textBox1.Text), connect);
+                                        using (SqlDataReader sdr = cmd.ExecuteReader())
+                                        {
+                                            if (sdr.Read())
+                                            {
+                                                read = true;
+                                            }
+                                        }
+                                        if (read)
+                                        {
+                                            cmd = new SqlCommand(string.Format("SELECT * FROM Clients WHERE Polis = '{0}' AND Name = '{1}' AND Surname = '{2}' AND Twoname = '{3}'", textBox1.Text, textBox2.Text, textBox3.Text, textBox4.Text), connect);
+                                            using (SqlDataReader sdr = cmd.ExecuteReader())
+                                            {
+                                                if (!sdr.Read())
+                                                {
+                                                    MessageBox.Show("В базе уже существует пользователь с введеным номером полиса, но личные данные не совпадают с указанными.");
+                                                    return;
+                                                }
+                                            }
+                                        }
+                                        else 
+                                        {
+                                            int id_c = 0;
+                                            cmd = new SqlCommand(string.Format("SELECT MAX(ID) FROM Clients"), connect);
+                                            using (SqlDataReader sdr1 = cmd.ExecuteReader())
+                                            {
+                                                if (sdr1.Read())
+                                                {
+                                                    id_c = (int)sdr1[0];
+                                                }
+                                            }
+                                            id_c++;
+                                            cmd = new SqlCommand(string.Format("INSERT INTO Clients VALUES ( '{0}', '{1}', '{2}', '{3}', '{4}', NULL)", id_c, textBox2.Text, textBox3.Text, textBox4.Text, textBox1.Text), connect);
+                                            cmd.ExecuteNonQuery();
+                                        }
                                         int id_d = 0;
                                         string[] str = comboBox2.Text.Split(' ');
-                                        SqlCommand cmd = new SqlCommand(string.Format("SELECT ID FROM Doctors WHERE Name = '{0}' AND Specialization = '{1}'", str[0], comboBox1.Text), connect);
+                                        cmd = new SqlCommand(string.Format("SELECT ID FROM Doctors WHERE Name = '{0}' AND Specialization = '{1}'", str[0], comboBox1.Text), connect);
                                         using (SqlDataReader sdr = cmd.ExecuteReader())
                                         {
                                             sdr.Read();
